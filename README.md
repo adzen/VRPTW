@@ -3,7 +3,15 @@ VRPTW
 
 "Vehicle Routing Problem with Time Windows"
 
-## Problems 
+## Problem Description
+
+  Given a depot with homogeneous fleet and a set of customers to be served.
+  
+  Find a set of closed routes (start from depot, end at depot) to serve all customers with no exceeding vehicle's capacity and customers' due time.
+  
+  Use as less number of vehicle and shorter total travel distance as possible.
+
+## Benchmark Problem Sets 
 
  * [Solomon's problem sets] (http://w.cba.neu.edu/~msolomon/problems.htm) (25, 50, and 100 customers)
  * [Gehring & Homberger's extended benchmark] (http://www.sintef.no/Projectweb/TOP/VRPTW/Homberger-benchmark/) (200, 400, 600, 800, and 1000 customers)
