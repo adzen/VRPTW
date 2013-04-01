@@ -1,18 +1,17 @@
 #include <cstdio>
+#include <ctime>
 
 #include <vector>
 
+#include "solution.h"
 #include "customer.h"
 #include "tools.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
-	vector<customer> customers;
-	int capacity;
-
+	srand(time(NULL));
 	
-
 
 
 	return 0;
