@@ -41,6 +41,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -61,16 +62,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customer.cpp" />
+    <ClCompile Include="problem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="route.cpp" />
     <ClCompile Include="solution.cpp" />
-    <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="customer.h" />
+    <ClInclude Include="problem.h" />
     <ClInclude Include="route.h" />
     <ClInclude Include="solution.h" />
-    <ClInclude Include="tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

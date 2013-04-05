@@ -21,13 +21,13 @@
     <ClCompile Include="customer.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
-    <ClCompile Include="tools.cpp">
-      <Filter>原始程式檔</Filter>
-    </ClCompile>
     <ClCompile Include="solution.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
     <ClCompile Include="route.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="problem.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,13 +35,13 @@
     <ClInclude Include="customer.h">
       <Filter>原始程式檔</Filter>
     </ClInclude>
-    <ClInclude Include="tools.h">
-      <Filter>原始程式檔</Filter>
-    </ClInclude>
     <ClInclude Include="solution.h">
       <Filter>原始程式檔</Filter>
     </ClInclude>
     <ClInclude Include="route.h">
+      <Filter>原始程式檔</Filter>
+    </ClInclude>
+    <ClInclude Include="problem.h">
       <Filter>原始程式檔</Filter>
     </ClInclude>
   </ItemGroup>
