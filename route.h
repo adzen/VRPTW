@@ -7,12 +7,12 @@
 #include "customer.h"
 #include "problem.h"
 
-
 class route{
 public:
 	void print(FILE *fp) const;
 	void fitness(const problem& input);
-	void sorting(const problem& input);
+	static int cmp(const route& routeA, const route& routeB, const problem& input);
+	bool hasCus(int cusID) const;
 
 	std::list<int> visits;
 	double distance, timewarp;

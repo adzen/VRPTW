@@ -45,6 +45,31 @@ void route::fitness(const problem& input){
 		}
 	}
 
-	if(arrival > input[0].end) feasible = false;
+	if(arrival > input[0].end){
+		feasible = false;
+		timewarp += arrival - input[0].end;
+	}
 }
 
+int route::cmp(const route& routeA, const route& routeB, const problem& input){
+	if(routeA.feasible != routeB.feasible){
+		if(routeA.feasible) return -1;
+		else return 1;
+	}else{
+		if(routeA.feasible){
+			return (int)(routeA.distance - routeB.distance);
+		}else{
+			if(routeA.totalDemand < input.getCapacity()) return -1;
+			if(routeB.totalDemand < input.getCapacity()) return 1;
+
+			if(routeA.timewarp == 0.0) return -1;
+			if(routeB.timewarp == 0.0) return 1;
+
+			return 0;
+		}
+	}
+}
+
+bool route::hasCus(int cusID) const {
+	return ( find(visits.begin(), visits.end(), cusID) != visits.end() );
+}

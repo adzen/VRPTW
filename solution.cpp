@@ -28,9 +28,7 @@ void solution::random(int maxRoutes, const problem& input){
 
 	for(int i = 0; i < maxRoutes; ++i){
 		if(newRoutes[i].size() > 0){
-			//random_shuffle(newRoutes[i].begin(), newRoutes[i].end());
-
-			// insert customers according to time window
+			// insert customers according to time windows' position
 			vector<int> sorted;
 			sorted.reserve(newRoutes[i].size());
 
@@ -68,5 +66,14 @@ void solution::fitness(const problem& input){
 		totalDistance += it->distance;
 		totalTimewarp += it->timewarp;
 		if(it->feasible == false) feasible = false;
+	}
+}
+
+int solution::cmp(const solution &solA, const solution &solB, const problem &input){
+	if(solA.feasible != solB.feasible){
+		if(solA.feasible) return -1;
+		else return 1;
+	}else{
+		return (solA.routes.size() - solB.routes.size());
 	}
 }

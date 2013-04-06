@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="customer.cpp" />
+    <ClCompile Include="evolution.cpp" />
     <ClCompile Include="problem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="route.cpp" />
@@ -69,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="customer.h" />
+    <ClInclude Include="evolution.h" />
     <ClInclude Include="problem.h" />
     <ClInclude Include="route.h" />
     <ClInclude Include="solution.h" />
