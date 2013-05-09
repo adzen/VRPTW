@@ -51,6 +51,7 @@ const customer& problem::operator [] (int id) const {
 	return allCustomer[id];
 }
 
+// minimum # of route = ceil(total demand / vehicle's capacity);
 int problem::calMinRoute() const {
 	int totalDemand = getCapacity() - 1;    // ceiling
 	for(int i = 1; i <= getNumCusto(); ++i) totalDemand += allCustomer[i].demand;
@@ -64,11 +65,10 @@ void problem::calDistances(){
 		distance[i].resize( allCustomer.size() );
 	}
 
-	for(unsigned int x = 0; x < allCustomer.size(); ++x){
-		for(unsigned int y = x+1; y < allCustomer.size(); ++y){
-			double ans = hypot(allCustomer[x].x_pos - allCustomer[y].x_pos,
-				allCustomer[x].y_pos - allCustomer[y].y_pos);
-			distance[x][y] = distance[y][x] = ans;
-		}
-	}
+	for(unsigned int x = 0;   x < allCustomer.size(); ++x){
+	for(unsigned int y = x+1; y < allCustomer.size(); ++y){
+		double ans = hypot(allCustomer[x].x_pos - allCustomer[y].x_pos,
+						   allCustomer[x].y_pos - allCustomer[y].y_pos);
+		distance[x][y] = distance[y][x] = ans;
+	}}
 }

@@ -17,6 +17,7 @@ void route::print(FILE *fp) const {
 void route::fitness(const problem& input){
 	vector<int> ids(visits.begin(), visits.end() );
 	
+	// reset all attributes
 	distance = timewarp = totalDemand = 0;
 	feasible = true;
 
@@ -34,12 +35,14 @@ void route::fitness(const problem& input){
 			arrival = input[ ids[i] ].start;
 		}
 
+		// unload
 		arrival += input[ ids[i] ].unload;
 
-		if( i == ids.size() - 1 ){
+		// traveling
+		if( i == ids.size() - 1 ){  // back to depot
 			arrival += input.getDistance(ids[i], 0);
 			distance += input.getDistance(ids[i], 0);
-		}else{
+		}else{  // goto next customer
 			arrival += input.getDistance(ids[i], ids[i+1]);
 			distance += input.getDistance(ids[i], ids[i+1]);
 		}
@@ -51,6 +54,7 @@ void route::fitness(const problem& input){
 	}
 }
 
+// further improvement
 int route::cmp(const route& routeA, const route& routeB, const problem& input){
 	if(routeA.feasible != routeB.feasible){
 		if(routeA.feasible) return -1;
