@@ -17,5 +17,6 @@
 *.user
 *.suo
 *.sdf
+*.opensdf
 [Dd]ebug/
 [Rr]elease/
