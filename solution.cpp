@@ -64,6 +64,77 @@ void solution::random(int maxRoutes, const problem& input){
 	fitness(input);
 }
 
+void solution::random(const problem& input){
+	// random shuffle all customer's id
+	vector<int> ids(input.getNumCusto());
+	for(unsigned int i = 0; i < ids.size(); ++i) ids[i] = i+1;
+	random_shuffle( ids.begin(), ids.end() );
+
+	clear();
+	route newRoute;
+	newRoute.clear();
+	double finish = 0;
+	for(unsigned int i = 0; i < ids.size(); ++i){
+		if(newRoute.totalDemand == 0){
+			// if the newRoute is empty, insert this customer
+			newRoute.visits.push_back(ids[i]);
+			
+			if(input.getDistance(0, ids[i]) < input[ ids[i] ].start){
+				finish = input[ ids[i] ].start;
+			}else{
+				finish = input.getDistance(0, ids[i]);
+			}
+			finish += input[ ids[i] ].unload;
+
+			newRoute.totalDemand += input[ ids[i] ].demand;
+			newRoute.distance += input.getDistance(0, ids[i]);
+		}else{
+			// if the newRoute isn't empty...
+			if(newRoute.totalDemand + input[ ids[i] ].demand <= input.getCapacity() &&
+				finish + input.getDistance(newRoute.visits.back(), ids[i]) <= input[ ids[i] ].end){
+				// will not overload & can arrive before the deadline
+				double arrival = finish + input.getDistance(newRoute.visits.back(), ids[i]);
+				double start = (arrival < input[ ids[i] ].start) ? (input[ ids[i] ].start) : (arrival);
+				
+				// after the insertion, if we can still back to depot before the deadline
+				if(start + input[ ids[i] ].unload + input.getDistance(ids[i], 0) <= input[0].end){
+					newRoute.distance += input.getDistance(newRoute.visits.back(), ids[i]);
+					newRoute.visits.push_back(ids[i]);
+					finish = start + input[ ids[i] ].unload;
+					newRoute.totalDemand += input[ ids[i] ].demand;
+				}
+			}
+		}
+
+		// if this customer still can't be appended, start a new route is needed
+		if(newRoute.visits.back() != ids[i]){
+			newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
+			newRoute.timewarp = 0;
+			newRoute.feasible = true;
+			routes.push_back(newRoute);
+			totalDistance += newRoute.distance;
+
+			newRoute.clear();
+			finish = 0;
+
+			i--;
+		}
+	}
+
+	if(newRoute.totalDemand != 0){
+		newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
+		newRoute.timewarp = 0;
+		newRoute.feasible = true;
+		routes.push_back(newRoute);
+		totalDistance += newRoute.distance;
+	}
+
+	// just for testing...
+	// double dis = totalDistance;
+	// fitness(input);
+	// if(totalDistance != dis || totalTimewarp > 0 || !feasible) puts("ERROR!");
+}
+
 void solution::fitness(const problem& input){
 	totalDistance = totalTimewarp = 0;
 	feasible = true;

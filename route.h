@@ -10,6 +10,7 @@
 class route{
 public:
 	void print(FILE *fp) const;
+	void clear();
 	void fitness(const problem& input);
 	static int cmp(const route& routeA, const route& routeB, const problem& input);
 	bool hasCus(int cusID) const;

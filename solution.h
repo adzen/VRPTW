@@ -13,6 +13,7 @@ public:
 	void print(FILE *fp) const;
 	void clear();
 	void random(int maxRoutes, const problem& input);
+	void random(const problem& input);
 	void fitness(const problem& input);
 	static int cmp(const solution &solA, const solution &solB, const problem &input);
 

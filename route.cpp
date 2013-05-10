@@ -14,6 +14,11 @@ void route::print(FILE *fp) const {
 	fprintf(fp, "\n");
 }
 
+void route::clear(){
+	visits.clear();
+	distance = timewarp = totalDemand = 0;
+}
+
 void route::fitness(const problem& input){
 	vector<int> ids(visits.begin(), visits.end() );
 	
