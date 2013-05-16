@@ -19,6 +19,7 @@ public:
 
 	std::list<route> routes;
 	double totalDistance, totalTimewarp;
+	int unbalancedCapacity;
 	bool feasible;
 };
 

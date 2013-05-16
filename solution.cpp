@@ -5,8 +5,8 @@
 using namespace std;
 
 void solution::print(FILE *fp) const {
-	fprintf(fp, "[%d routes, distance = %.3f, timewarp = %.3f, %s]\n",
-		routes.size(), totalDistance, totalTimewarp, (feasible) ? "feasible" : "infeasible");
+	fprintf(fp, "[%d routes, distance = %.3f, timewarp = %.3f, unbalance = %d, %s]\n",
+		routes.size(), totalDistance, totalTimewarp, unbalancedCapacity, (feasible) ? "feasible" : "infeasible");
 	
 	for(list<route>::const_iterator it = routes.begin(); it != routes.end(); ++it){
 		it->print(fp);
@@ -15,7 +15,7 @@ void solution::print(FILE *fp) const {
 
 void solution::clear(){
 	routes.clear();
-	totalDistance = totalTimewarp = 0;
+	totalDistance = totalTimewarp = unbalancedCapacity = 0;
 }
 
 void solution::random(int maxRoutes, const problem& input){
@@ -113,6 +113,8 @@ void solution::random(const problem& input){
 			newRoute.feasible = true;
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
+			unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
+				(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
 
 			newRoute.clear();
 			finish = 0;
@@ -127,6 +129,8 @@ void solution::random(const problem& input){
 		newRoute.feasible = true;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
+		unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
+			(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
 	}
 
 	// just for testing...
@@ -136,23 +140,27 @@ void solution::random(const problem& input){
 }
 
 void solution::fitness(const problem& input){
-	totalDistance = totalTimewarp = 0;
+	totalDistance = totalTimewarp = unbalancedCapacity = 0;
 	feasible = true;
 
 	for(list<route>::iterator it = routes.begin(); it != routes.end(); ++it){
 		it->fitness(input);
 		totalDistance += it->distance;
 		totalTimewarp += it->timewarp;
+		unbalancedCapacity += (it->totalDemand > input.getCapacity()) ? 
+			(it->totalDemand - input.getCapacity()) : (input.getCapacity() - it->totalDemand);
 		if(it->feasible == false) feasible = false;
 	}
 }
 
-// further improvement
 int solution::cmp(const solution &solA, const solution &solB, const problem &input){
 	if(solA.feasible != solB.feasible){
 		if(solA.feasible) return -1;
 		else return 1;
+	}else if(solA.feasible){
+		return (solA.unbalancedCapacity - solB.unbalancedCapacity);
 	}else{
-		return (solA.routes.size() - solB.routes.size());
+		if(solA.totalTimewarp < solB.totalTimewarp) return -1;
+		else return 1;
 	}
 }
