@@ -16,6 +16,7 @@ public:
 	void random(const problem& input);
 	void fitness(const problem& input);
 	static int cmp(const solution &solA, const solution &solB, const problem &input);
+	static bool dominate(const solution &solA, const solution &solB);
 
 	std::list<route> routes;
 	double totalDistance, totalTimewarp;
