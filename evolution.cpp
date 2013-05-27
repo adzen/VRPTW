@@ -77,3 +77,63 @@ const solution& tournament(const std::list<solution> &population, const problem 
 	if(cmp < 0) return (*itA);
 	else return (*itB);
 }
+
+// Use Deb's "Fast Nondominated Sorting" (2002)
+// Ref.: "A fast and elitist multiobjective genetic algorithm: NSGA-II"
+void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output){
+	vector<solution> solutions(population.begin(), population.end() );
+
+	vector< list<int> > intOutput;
+	intOutput.resize(solutions.size() + 2);  // start from 1, end with null Qi 
+	output->resize(1);
+
+	// record each solutions' dominated solution
+	vector< list<int> > dominated;
+	dominated.resize(solutions.size());
+
+	// record # of solutions dominate this solution
+	vector<int> counter;
+	counter.resize(solutions.size());
+
+	// record the rank of solutions
+	vector<int> rank;
+	rank.resize(solutions.size());
+
+	
+	// for each solution
+	for(unsigned int p = 0; p < solutions.size(); p++){
+		for(unsigned int q = 0; q < solutions.size(); q++){
+			if( solution::dominate(solutions[p], solutions[q]) ){
+				dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
+			}else if( solution::dominate(solutions[q], solutions[p]) ){
+				counter[p]++;
+			}
+		}
+		
+		if(counter[p] == 0){  // p belongs to the first front
+			rank[p] = 1;
+			intOutput[1].push_back(p);
+			(*output)[0].push_back(solutions[p]);
+		}
+	}
+
+	int curRank = 1;
+	while( intOutput[curRank].size() > 0 ){
+		list<int> Qi;  // Used to store the members of the next front
+		list<solution> Qs;
+
+		for(list<int>::iterator p = intOutput[curRank].begin(); p != intOutput[curRank].end(); p++){
+		for(list<int>::iterator q = dominated[(*p)].begin(); q != dominated[(*p)].end(); q++){
+			counter[(*q)]--;
+			if(counter[(*q)] == 0){  // q belongs to the next front
+				rank[(*q)] = curRank + 1;
+				Qi.push_back(*q);
+				Qs.push_back(solutions[(*q)]);
+			}
+		}}
+
+		curRank++;
+		intOutput[curRank] = Qi;
+		if(Qi.size() > 0) output->push_back(Qs);
+	}
+}
