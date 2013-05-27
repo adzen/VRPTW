@@ -166,6 +166,7 @@ int solution::cmp(const solution &solA, const solution &solB, const problem &inp
 }
 
 bool solution::dominate(const solution &solA, const solution &solB){
+	if(solA.feasible != solB.feasible) return (solA.feasible);
 	if( solA.totalDistance <= solB.totalDistance && solA.routes.size() <= solB.routes.size() ){
 		return ( solA.totalDistance < solB.totalDistance || solA.routes.size() < solB.routes.size() );
 	}else return false;
