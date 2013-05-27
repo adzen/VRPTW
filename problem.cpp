@@ -26,7 +26,7 @@ bool problem::load(const char* filename){
 			return false;
 		}
 
-		customer newCustomer(x, y, d, s, e, u);
+		customer newCustomer(i, x, y, d, s, e, u);
 		allCustomer.push_back(newCustomer);
 	}
 	fclose(fp);

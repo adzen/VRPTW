@@ -3,10 +3,11 @@
 
 class customer{
 public:
-	customer(double x, double y, int demand, int start, int end, int unload);
+	customer(int id, double x, double y, int demand, int start, int end, int unload);
 	
-	const double x_pos, y_pos;
-	const int demand, start, end, unload;
+	int id;
+	double x_pos, y_pos;
+	int demand, start, end, unload;
 };
 
 #endif
