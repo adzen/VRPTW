@@ -19,7 +19,7 @@ public:
 	static bool dominate(const solution &solA, const solution &solB);
 
 	std::list<route> routes;
-	double totalDistance, totalTimewarp;
+	double totalDistance, totalTimewarp, totalWaiting;
 	int unbalancedCapacity;
 	bool feasible;
 };

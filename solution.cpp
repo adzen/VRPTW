@@ -15,7 +15,7 @@ void solution::print(FILE *fp) const {
 
 void solution::clear(){
 	routes.clear();
-	totalDistance = totalTimewarp = unbalancedCapacity = 0;
+	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = 0;
 }
 
 void solution::random(int maxRoutes, const problem& input){
@@ -80,6 +80,7 @@ void solution::random(const problem& input){
 			newRoute.visits.push_back(ids[i]);
 			
 			if(input.getDistance(0, ids[i]) < input[ ids[i] ].start){
+				newRoute.waiting += input[ ids[i] ].start - input.getDistance(0, ids[i]);
 				finish = input[ ids[i] ].start;
 			}else{
 				finish = input.getDistance(0, ids[i]);
@@ -98,6 +99,7 @@ void solution::random(const problem& input){
 				
 				// after the insertion, if we can still back to depot before the deadline
 				if(start + input[ ids[i] ].unload + input.getDistance(ids[i], 0) <= input[0].end){
+					newRoute.waiting += (arrival < input[ ids[i] ].start) ? (input[ ids[i] ].start - arrival) : (0);
 					newRoute.distance += input.getDistance(newRoute.visits.back(), ids[i]);
 					newRoute.visits.push_back(ids[i]);
 					finish = start + input[ ids[i] ].unload;
@@ -113,6 +115,7 @@ void solution::random(const problem& input){
 			newRoute.feasible = true;
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
+			totalWaiting += newRoute.waiting;
 			unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
 				(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
 
@@ -129,6 +132,7 @@ void solution::random(const problem& input){
 		newRoute.feasible = true;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
+		totalWaiting += newRoute.waiting;
 		unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
 			(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
 	}
@@ -140,13 +144,14 @@ void solution::random(const problem& input){
 }
 
 void solution::fitness(const problem& input){
-	totalDistance = totalTimewarp = unbalancedCapacity = 0;
+	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = 0;
 	feasible = true;
 
 	for(list<route>::iterator it = routes.begin(); it != routes.end(); ++it){
 		it->fitness(input);
 		totalDistance += it->distance;
 		totalTimewarp += it->timewarp;
+		totalWaiting += it->waiting;
 		unbalancedCapacity += (it->totalDemand > input.getCapacity()) ? 
 			(it->totalDemand - input.getCapacity()) : (input.getCapacity() - it->totalDemand);
 		if(it->feasible == false) feasible = false;

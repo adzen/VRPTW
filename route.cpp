@@ -16,14 +16,14 @@ void route::print(FILE *fp) const {
 
 void route::clear(){
 	visits.clear();
-	distance = timewarp = totalDemand = 0;
+	distance = timewarp = waiting = totalDemand = 0;
 }
 
 void route::fitness(const problem& input){
 	vector<int> ids(visits.begin(), visits.end() );
 	
 	// reset all attributes
-	distance = timewarp = totalDemand = 0;
+	distance = timewarp = waiting = totalDemand = 0;
 	feasible = true;
 
 	double arrival = input.getDistance(0, ids[0]);
@@ -37,6 +37,7 @@ void route::fitness(const problem& input){
 			timewarp += arrival - input[ ids[i] ].end;
 			arrival = input[ ids[i] ].end;
 		}else if(arrival < input[ ids[i] ].start){    // early arrival: wait
+			waiting += input[ ids[i] ].start - arrival;
 			arrival = input[ ids[i] ].start;
 		}
 

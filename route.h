@@ -16,7 +16,7 @@ public:
 	bool hasCus(int cusID) const;
 
 	std::list<int> visits;
-	double distance, timewarp;
+	double distance, timewarp, waiting;
 	int totalDemand;
 	bool feasible;
 };
