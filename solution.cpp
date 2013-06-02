@@ -75,7 +75,7 @@ void solution::random(const problem& input){
 	newRoute.clear();
 	double finish = 0;
 	for(unsigned int i = 0; i < ids.size(); ++i){
-		if(newRoute.totalDemand == 0){
+		if(newRoute.load == 0){
 			// if the newRoute is empty, insert this customer
 			newRoute.visits.push_back(ids[i]);
 			
@@ -87,11 +87,11 @@ void solution::random(const problem& input){
 			}
 			finish += input[ ids[i] ].unload;
 
-			newRoute.totalDemand += input[ ids[i] ].demand;
+			newRoute.load += input[ ids[i] ].demand;
 			newRoute.distance += input.getDistance(0, ids[i]);
 		}else{
 			// if the newRoute isn't empty...
-			if(newRoute.totalDemand + input[ ids[i] ].demand <= input.getCapacity() &&
+			if(newRoute.load + input[ ids[i] ].demand <= input.getCapacity() &&
 				finish + input.getDistance(newRoute.visits.back(), ids[i]) <= input[ ids[i] ].end){
 				// will not overload & can arrive before the deadline
 				double arrival = finish + input.getDistance(newRoute.visits.back(), ids[i]);
@@ -103,7 +103,7 @@ void solution::random(const problem& input){
 					newRoute.distance += input.getDistance(newRoute.visits.back(), ids[i]);
 					newRoute.visits.push_back(ids[i]);
 					finish = start + input[ ids[i] ].unload;
-					newRoute.totalDemand += input[ ids[i] ].demand;
+					newRoute.load += input[ ids[i] ].demand;
 				}
 			}
 		}
@@ -116,8 +116,8 @@ void solution::random(const problem& input){
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
 			totalWaiting += newRoute.waiting;
-			unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
-				(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
+			unbalancedCapacity += (newRoute.load > input.getCapacity()) ? 
+				(newRoute.load - input.getCapacity()) : (input.getCapacity() - newRoute.load);
 
 			newRoute.clear();
 			finish = 0;
@@ -126,15 +126,15 @@ void solution::random(const problem& input){
 		}
 	}
 
-	if(newRoute.totalDemand != 0){
+	if(newRoute.load != 0){
 		newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
 		newRoute.timewarp = 0;
 		newRoute.feasible = true;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
 		totalWaiting += newRoute.waiting;
-		unbalancedCapacity += (newRoute.totalDemand > input.getCapacity()) ? 
-			(newRoute.totalDemand - input.getCapacity()) : (input.getCapacity() - newRoute.totalDemand);
+		unbalancedCapacity += (newRoute.load > input.getCapacity()) ? 
+			(newRoute.load - input.getCapacity()) : (input.getCapacity() - newRoute.load);
 	}
 
 	// just for testing...
@@ -152,8 +152,8 @@ void solution::fitness(const problem& input){
 		totalDistance += it->distance;
 		totalTimewarp += it->timewarp;
 		totalWaiting += it->waiting;
-		unbalancedCapacity += (it->totalDemand > input.getCapacity()) ? 
-			(it->totalDemand - input.getCapacity()) : (input.getCapacity() - it->totalDemand);
+		unbalancedCapacity += (it->load > input.getCapacity()) ? 
+			(it->load - input.getCapacity()) : (input.getCapacity() - it->load);
 		if(it->feasible == false) feasible = false;
 	}
 }

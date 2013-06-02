@@ -16,21 +16,21 @@ void route::print(FILE *fp) const {
 
 void route::clear(){
 	visits.clear();
-	distance = timewarp = waiting = totalDemand = 0;
+	distance = timewarp = waiting = load = 0;
 }
 
 void route::fitness(const problem& input){
 	vector<int> ids(visits.begin(), visits.end() );
 	
 	// reset all attributes
-	distance = timewarp = waiting = totalDemand = 0;
+	distance = timewarp = waiting = load = 0;
 	feasible = true;
 
 	double arrival = input.getDistance(0, ids[0]);
 	distance = arrival;
 	for(unsigned int i = 0; i < ids.size(); ++i){
-		totalDemand += input[ ids[i] ].demand;
-		if( totalDemand > input.getCapacity() ) feasible = false;
+		load += input[ ids[i] ].demand;
+		if( load > input.getCapacity() ) feasible = false;
 	
 		if(arrival > input[ ids[i] ].end){    // late arrival: time-wrap
 			feasible = false;
@@ -69,8 +69,8 @@ int route::cmp(const route& routeA, const route& routeB, const problem& input){
 		if(routeA.feasible){
 			return (int)(routeA.distance - routeB.distance);
 		}else{
-			if(routeA.totalDemand < input.getCapacity()) return -1;
-			if(routeB.totalDemand < input.getCapacity()) return 1;
+			if(routeA.load < input.getCapacity()) return -1;
+			if(routeB.load < input.getCapacity()) return 1;
 
 			if(routeA.timewarp == 0.0) return -1;
 			if(routeB.timewarp == 0.0) return 1;
