@@ -60,24 +60,8 @@ void route::fitness(const problem& input){
 	}
 }
 
-// further improvement
 int route::cmp(const route& routeA, const route& routeB, const problem& input){
-	if(routeA.feasible != routeB.feasible){
-		if(routeA.feasible) return -1;
-		else return 1;
-	}else{
-		if(routeA.feasible){
-			return (int)(routeA.distance - routeB.distance);
-		}else{
-			if(routeA.load < input.getCapacity()) return -1;
-			if(routeB.load < input.getCapacity()) return 1;
-
-			if(routeA.timewarp == 0.0) return -1;
-			if(routeB.timewarp == 0.0) return 1;
-
-			return 0;
-		}
-	}
+	return routeB.visits.size() - routeA.visits.size();
 }
 
 bool route::hasCus(int cusID) const {
