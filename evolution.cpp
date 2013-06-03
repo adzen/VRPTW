@@ -137,3 +137,13 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 		if(Qi.size() > 0) output->push_back(Qs);
 	}
 }
+
+void environmental(const std::vector< std::list<solution> > &ranked, std::list<solution> *output, unsigned int maxSize){
+	int curRank = 0;
+	while(output->size() < maxSize){
+		for(list<solution>::const_iterator it = ranked[curRank].begin(); it != ranked[curRank].end(); it++){
+			output->push_back(*it);
+		}
+		curRank++;
+	}
+}
