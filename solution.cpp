@@ -176,3 +176,14 @@ bool solution::dominate(const solution &solA, const solution &solB){
 		return ( solA.totalDistance < solB.totalDistance || solA.routes.size() < solB.routes.size() );
 	}else return false;
 }
+
+bool solution::isSame(const solution &solA, const solution &solB){
+	return (solA.routes.size() == solB.routes.size() && 
+                solA.totalDistance - solB.totalDistance < 0.01 && 
+                solA.totalDistance - solB.totalDistance > -0.01 );
+}
+
+bool solution::sort(const solution &solA, const solution &solB){
+	if(solA.routes.size() != solB.routes.size() ) return (solA.routes.size() < solB.routes.size());
+	else return (solA.totalDistance < solB.totalDistance);
+}

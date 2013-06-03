@@ -17,6 +17,8 @@ public:
 	void fitness(const problem& input);
 	static int cmp(const solution &solA, const solution &solB, const problem &input);
 	static bool dominate(const solution &solA, const solution &solB);
+	static bool isSame(const solution &solA, const solution &solB);
+	static bool sort(const solution &solA, const solution &solB);
 
 	std::list<route> routes;
 	double totalDistance, totalTimewarp, totalWaiting;
