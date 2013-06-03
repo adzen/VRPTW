@@ -7,6 +7,7 @@ using namespace std;
 solution crossover(const solution &pa, const solution &pb, const problem& input){
 	solution offspring;
 	
+	// make an union of the two sets of routes
 	vector<route> allRoutes;
 	allRoutes.insert(allRoutes.end(), pa.routes.begin(), pa.routes.end() );
 	allRoutes.insert(allRoutes.end(), pb.routes.begin(), pb.routes.end() );
@@ -19,8 +20,9 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 		int selectRouteB = rand() % allRoutes.size();
 		int cmpResult = route::cmp(allRoutes[selectRouteA], allRoutes[selectRouteB], input);
 		
-		if(cmpResult == 0) cmpResult = (rand() % 2) * 2 - 1;
+		if(cmpResult == 0) cmpResult = (rand() % 2) * 2 - 1;  // -1 or 1
 
+		// move the route into offspring from allRoutes
 		route deleteRoute;
 		if(cmpResult < 0){
 			offspring.routes.push_back(allRoutes[selectRouteA]);
@@ -36,6 +38,7 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 		for(list<int>::const_iterator it = deleteRoute.visits.begin(); it != deleteRoute.visits.end(); it++){
 			insertedCus[ (*it) ] = true;
 			
+			// remove the routes with conflite customers
 			for(unsigned int i = 0; i < allRoutes.size(); ++i){
 				if( allRoutes[i].hasCus( (*it) ) ){
 					allRoutes.erase(allRoutes.begin() + i);
@@ -62,6 +65,7 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	return offspring;
 }
 
+// 2-tournament selection from population
 const solution& tournament(const std::list<solution> &population, const problem &input){
 	int selectA = rand() % population.size();
 	int selectB = rand() % population.size();
@@ -72,7 +76,7 @@ const solution& tournament(const std::list<solution> &population, const problem 
 	advance(itB, selectB);
 
 	int cmp = solution::cmp( (*itA), (*itB), input);
-	if(cmp == 0) cmp = (rand() % 2) * 2 - 1;
+	if(cmp == 0) cmp = (rand() % 2) * 2 - 1;   // -1 or 1
 
 	if(cmp < 0) return (*itA);
 	else return (*itB);
