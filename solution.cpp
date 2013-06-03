@@ -8,9 +8,9 @@ void solution::print(FILE *fp) const {
 	fprintf(fp, "[%d routes, distance = %.3f, timewarp = %.3f, unbalance = %d, %s]\n",
 		routes.size(), totalDistance, totalTimewarp, unbalancedCapacity, (feasible) ? "feasible" : "infeasible");
 	
-	for(list<route>::const_iterator it = routes.begin(); it != routes.end(); ++it){
+	/*for(list<route>::const_iterator it = routes.begin(); it != routes.end(); ++it){
 		it->print(fp);
-	}
+	}*/
 }
 
 void solution::clear(){
