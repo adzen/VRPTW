@@ -175,8 +175,8 @@ bool solution::dominate(const solution &solA, const solution &solB){
 
 bool solution::isSame(const solution &solA, const solution &solB){
 	return (solA.routes.size() == solB.routes.size() && 
-                solA.totalDistance - solB.totalDistance < 0.01 && 
-                solA.totalDistance - solB.totalDistance > -0.01 );
+			solA.unbalancedCapacity == solB.unbalancedCapacity &&
+            solA.totalDistance - solB.totalDistance < 0.01 && solA.totalDistance - solB.totalDistance > -0.01 );
 }
 
 bool solution::sort(const solution &solA, const solution &solB){
