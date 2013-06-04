@@ -111,13 +111,11 @@ void solution::random(const problem& input){
 		// if this customer still can't be appended, start a new route is needed
 		if(newRoute.visits.back() != ids[i]){
 			newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
-			newRoute.timewarp = 0;
 			newRoute.feasible = true;
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
 			totalWaiting += newRoute.waiting;
-			unbalancedCapacity += (newRoute.load > input.getCapacity()) ? 
-				(newRoute.load - input.getCapacity()) : (input.getCapacity() - newRoute.load);
+			unbalancedCapacity += (input.getCapacity() - newRoute.load);
 
 			newRoute.clear();
 			finish = 0;
@@ -128,13 +126,11 @@ void solution::random(const problem& input){
 
 	if(newRoute.load != 0){
 		newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
-		newRoute.timewarp = 0;
 		newRoute.feasible = true;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
 		totalWaiting += newRoute.waiting;
-		unbalancedCapacity += (newRoute.load > input.getCapacity()) ? 
-			(newRoute.load - input.getCapacity()) : (input.getCapacity() - newRoute.load);
+		unbalancedCapacity += (input.getCapacity() - newRoute.load);
 	}
 
 	// just for testing...
