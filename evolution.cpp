@@ -188,11 +188,21 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 }
 
 void environmental(const std::vector< std::list<solution> > &ranked, std::list<solution> *output, unsigned int maxSize){
-	int curRank = 0;
-	while(output->size() < maxSize){
+	unsigned int curRank = 0;
+	while(output->size() + ranked[curRank].size() <= maxSize){
 		for(list<solution>::const_iterator it = ranked[curRank].begin(); it != ranked[curRank].end(); it++){
 			output->push_back(*it);
 		}
 		curRank++;
+	}
+	
+	if(output->size() < maxSize && curRank < ranked.size() ){
+		vector<solution> nextRank(ranked[curRank].begin(), ranked[curRank].end() );
+
+		while(output->size() < maxSize){
+			unsigned int select = rand() % nextRank.size();
+			output->push_back(nextRank[select]);
+			nextRank.erase(nextRank.begin() + select);
+		}
 	}
 }
