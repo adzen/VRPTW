@@ -4,62 +4,46 @@
 
 using namespace std;
 
+bool reduceRoute(solution &sol, const problem& input){
+	return false;
+}
+
 solution crossover(const solution &pa, const solution &pb, const problem& input){
-	solution offspring;
-	
-	// make an union of the two sets of routes
-	vector<route> allRoutes;
-	allRoutes.insert(allRoutes.end(), pa.routes.begin(), pa.routes.end() );
-	allRoutes.insert(allRoutes.end(), pb.routes.begin(), pb.routes.end() );
+	solution offspring = pa;
 
-	int remainCus = input.getNumCusto();
-	vector<bool> insertedCus(input.getNumCusto()+1);
-
-	while(remainCus > 0 && allRoutes.size() > 0){
-		int selectRouteA = rand() % allRoutes.size();
-		int selectRouteB = rand() % allRoutes.size();
-		int cmpResult = route::cmp(allRoutes[selectRouteA], allRoutes[selectRouteB], input);
-		
-		if(cmpResult == 0) cmpResult = (rand() % 2) * 2 - 1;  // -1 or 1
-
-		// move the route into offspring from allRoutes
-		route deleteRoute;
-		if(cmpResult < 0){
-			offspring.routes.push_back(allRoutes[selectRouteA]);
-			deleteRoute = allRoutes[selectRouteA];
-			allRoutes.erase(allRoutes.begin() + selectRouteA);
-		}else{
-			offspring.routes.push_back(allRoutes[selectRouteB]);
-			deleteRoute = allRoutes[selectRouteB];
-			allRoutes.erase(allRoutes.begin() + selectRouteB);
-		}
-
-		remainCus -= deleteRoute.visits.size();
-		for(list<int>::const_iterator it = deleteRoute.visits.begin(); it != deleteRoute.visits.end(); it++){
-			insertedCus[ (*it) ] = true;
-			
-			// remove the routes with conflite customers
-			for(unsigned int i = 0; i < allRoutes.size(); ++i){
-				if( allRoutes[i].hasCus( (*it) ) ){
-					allRoutes.erase(allRoutes.begin() + i);
-					--i;
-				}
-			}	
+	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
+	// find longest route
+	unsigned int maxR, max = 0;
+	for(unsigned int i = 0; i < bRoutes.size(); ++i){
+		if(bRoutes[i].visits.size() > max){
+			max = bRoutes[i].visits.size();
+			maxR = i;
 		}
 	}
-
-	if(remainCus > 0){
-		route additional;
-		vector<int> newVisits;
-		for(int i = 1; i <= input.getNumCusto(); ++i){
-			if(insertedCus[i] == false){
-				newVisits.push_back(i);
+	
+	// remove longest route's customer
+	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ++it){
+		for(list<int>::iterator cus = bRoutes[maxR].visits.begin(); cus != bRoutes[maxR].visits.end(); cus++){
+			list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
+			if( todel != it->visits.end() ){
+				it->visits.erase(todel);
+				if(it->visits.size() == 0) break;
 			}
 		}
-		random_shuffle(newVisits.begin(), newVisits.end());
-		additional.visits = list<int>(newVisits.begin(), newVisits.end());
-		offspring.routes.push_back(additional);
 	}
+
+	// remove empty route
+	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ){
+		if(it->visits.size() == 0){
+			it = offspring.routes.erase(it);
+		}else{
+			it++;
+		}
+	}
+
+	offspring.routes.push_back(bRoutes[maxR]);
+
+	while( reduceRoute(offspring, input) );
 
 	offspring.fitness(input);
 	return offspring;
