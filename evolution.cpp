@@ -179,6 +179,12 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 		intOutput[curRank] = Qi;
 		if(Qi.size() > 0) output->push_back(Qs);
 	}
+
+	// remove duplicate solution in same rank
+	for(unsigned int rank = 0; rank < output->size(); ++rank){
+		(*output)[rank].sort(solution::sort);
+		(*output)[rank].unique(solution::isSame);
+	}
 }
 
 void environmental(const std::vector< std::list<solution> > &ranked, std::list<solution> *output, unsigned int maxSize){
