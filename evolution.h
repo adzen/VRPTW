@@ -6,6 +6,7 @@
 #include "solution.h"
 
 solution crossover(const solution &a, const solution &b, const problem &input);
+void mutation(solution &sol, const problem& input);
 const solution& tournament(const std::list<solution> &population, const problem &input);
 
 void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output);

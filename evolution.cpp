@@ -65,6 +65,45 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	return offspring;
 }
 
+void mutation(solution &sol, const problem& input){
+	int tryCount = 0;
+	while(tryCount < input.getNumCusto() ){
+		solution test = sol;
+
+		list<route>::iterator routeA = test.routes.begin();
+		advance(routeA, rand() % test.routes.size() );
+		list<route>::iterator routeB = test.routes.begin();
+		advance(routeB, rand() % test.routes.size() );
+
+		int beforeFeasibleCount = 0;
+		if(routeA->feasible) beforeFeasibleCount++;
+		if(routeB->feasible) beforeFeasibleCount++;
+
+		list<int>::iterator cusA = routeA->visits.begin();
+		advance(cusA, rand() % routeA->visits.size() );
+		list<int>::iterator cusB = routeB->visits.begin();
+		advance(cusB, rand() % routeB->visits.size() );
+
+		routeB->visits.insert(cusB, *cusA);
+		routeA->visits.erase(cusA);
+		bool reduce = false;
+		if( routeA->visits.empty() ){
+			test.routes.erase(routeA);
+			reduce = true;
+		}
+
+		test.fitness(input);
+		
+		int afterFeasibleCount = 0;
+		if(reduce || routeA->feasible) afterFeasibleCount++;
+		if(routeB->feasible) afterFeasibleCount++;
+
+		if(afterFeasibleCount >= beforeFeasibleCount) sol = test;
+
+		tryCount++;
+	}
+}
+
 // 2-tournament selection from population
 const solution& tournament(const std::list<solution> &population, const problem &input){
 	int selectA = rand() % population.size();
