@@ -38,7 +38,13 @@ int main(int argc, char *argv[]){
 			merged.push_back(p);
 		}
 
-		for(list<solution>::iterator it = merged.begin(); it != merged.end(); it++) mutation(*it, input);
+		list<solution> feasible, infeasible;
+		for(list<solution>::iterator it = merged.begin(); it != merged.end(); it++){
+			mutation(*it, input);
+
+			if(it->feasible) feasible.push_front(*it);
+			else infeasible.push_front(*it);
+		}
 
 		vector< list<solution> > rank;
 		ranking(merged, &rank, true);
