@@ -15,7 +15,7 @@ void solution::print(FILE *fp) const {
 
 void solution::clear(){
 	routes.clear();
-	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = 0;
+	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = exceededCapacity = 0;
 }
 
 void solution::random(int maxRoutes, const problem& input){
@@ -140,7 +140,7 @@ void solution::random(const problem& input){
 }
 
 void solution::fitness(const problem& input){
-	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = 0;
+	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = exceededCapacity = 0;
 	feasible = true;
 
 	for(list<route>::iterator it = routes.begin(); it != routes.end(); ++it){
@@ -150,6 +150,7 @@ void solution::fitness(const problem& input){
 		totalWaiting += it->waiting;
 		unbalancedCapacity += (it->load > input.getCapacity()) ? 
 			(it->load - input.getCapacity()) : (input.getCapacity() - it->load);
+		if(it->load > input.getCapacity() ) exceededCapacity += (it->load - input.getCapacity());
 		if(it->feasible == false) feasible = false;
 	}
 }
@@ -173,8 +174,8 @@ bool solution::fdominate(const solution &solA, const solution &solB){
 }
 
 bool solution::idominate(const solution &solA, const solution &solB){
-	if( solA.unbalancedCapacity <= solB.unbalancedCapacity && solA.totalTimewarp <= solB.totalTimewarp ){
-		return ( solA.unbalancedCapacity < solB.unbalancedCapacity || solA.totalTimewarp < solB.totalTimewarp );
+	if( solA.exceededCapacity <= solB.exceededCapacity && solA.totalTimewarp <= solB.totalTimewarp ){
+		return ( solA.exceededCapacity < solB.exceededCapacity || solA.totalTimewarp < solB.totalTimewarp );
 	}else return false;
 }
 

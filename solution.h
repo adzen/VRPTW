@@ -23,7 +23,7 @@ public:
 
 	std::list<route> routes;
 	double totalDistance, totalTimewarp, totalWaiting;
-	int unbalancedCapacity;
+	int unbalancedCapacity, exceededCapacity;
 	bool feasible;
 };
 
