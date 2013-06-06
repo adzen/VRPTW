@@ -46,11 +46,12 @@ int main(int argc, char *argv[]){
 			else infeasible.push_front(*it);
 		}
 
-		vector< list<solution> > rank;
-		ranking(merged, &rank, true);
+		vector< list<solution> > frank, irank;
+		ranking(feasible, &frank, true);
+		ranking(infeasible, &irank, false);
 
 		population.clear();
-		environmental(rank, &population, 100);
+		environmental(frank, &population, 100);
 	}
 
 	// finally...
