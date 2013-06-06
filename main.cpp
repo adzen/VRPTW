@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 
 	// load input data
 	problem input;
-	if( !input.load("input.txt"/*"C:\\Users\\adzen\\Documents\\GitHub\\VRPTW\\problems\\0025_RC208.txt"*/) ){
+	if( !input.load("C:\\Users\\adzen\\Documents\\GitHub\\VRPTW\\problems\\0025_RC208.txt") ){
 		puts("Unable to open input file!");
 		return 1;
 	}
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
 	}
 	
 	// evolution
-	for(int run = 0; run < 100; run++){
+	for(int run = 0; run < 100; run++){putchar('*');
 		list<solution> merged(population.begin(), population.end() );
 		for(int off = 0; off < 100; off++){
 			solution p = crossover( tournament(population, input), tournament(population, input), input);
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 		for(list<solution>::iterator it = merged.begin(); it != merged.end(); it++) mutation(*it, input);
 
 		vector< list<solution> > rank;
-		ranking(merged, &rank);
+		ranking(merged, &rank, true);
 
 		population.clear();
 		environmental(rank, &population, 100);
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 
 	// finally...
 	vector< list<solution> > rank;
-	ranking(population, &rank);
+	ranking(population, &rank, true);
 	rank[0].sort(solution::sort);
 	rank[0].unique(solution::isSame);
 

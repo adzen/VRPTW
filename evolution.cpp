@@ -107,7 +107,7 @@ const solution& tournament(const std::list<solution> &population, const problem 
 
 // Use Deb's "Fast Nondominated Sorting" (2002)
 // Ref.: "A fast and elitist multiobjective genetic algorithm: NSGA-II"
-void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output){
+void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output, bool feasible){
 	vector<solution> solutions(population.begin(), population.end() );
 
 	vector< list<int> > intOutput;
@@ -130,10 +130,18 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 	// for each solution
 	for(unsigned int p = 0; p < solutions.size(); p++){
 		for(unsigned int q = 0; q < solutions.size(); q++){
-			if( solution::dominate(solutions[p], solutions[q]) ){
-				dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
-			}else if( solution::dominate(solutions[q], solutions[p]) ){
-				counter[p]++;
+			if( feasible ){
+				if( solution::fdominate(solutions[p], solutions[q]) ){
+					dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
+				}else if( solution::fdominate(solutions[q], solutions[p]) ){
+					counter[p]++;
+				}
+			}else{
+				if( solution::idominate(solutions[p], solutions[q]) ){
+					dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
+				}else if( solution::idominate(solutions[q], solutions[p]) ){
+					counter[p]++;
+				}
 			}
 		}
 		
