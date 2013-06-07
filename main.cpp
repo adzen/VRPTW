@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
 		ranking(infeasible, &irank, false);
 
 		population.clear();
-		environmental(frank, &population, 100);
+		environmental(frank, irank, &population, 100);
 	}
 
 	// finally...

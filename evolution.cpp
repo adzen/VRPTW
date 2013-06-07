@@ -179,17 +179,36 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 	}
 }
 
-void environmental(const std::vector< std::list<solution> > &ranked, std::list<solution> *output, unsigned int maxSize){
+void environmental(const vector< list<solution> > &frank, const vector< list<solution> > &irank, list<solution> *output, unsigned int maxSize){
 	unsigned int curRank = 0;
-	while(output->size() + ranked[curRank].size() <= maxSize){
-		for(list<solution>::const_iterator it = ranked[curRank].begin(); it != ranked[curRank].end(); it++){
-			output->push_back(*it);
-		}
+
+	while(true){
+		if(curRank < frank.size() && output->size() + frank[curRank].size() <= maxSize){
+			for(list<solution>::const_iterator it = frank[curRank].begin(); it != frank[curRank].end(); it++){
+				output->push_back(*it);
+			}
+		}else if(curRank < frank.size() ) break;
+
+		if(curRank < irank.size() && output->size() + irank[curRank].size() <= maxSize){
+			for(list<solution>::const_iterator it = irank[curRank].begin(); it != irank[curRank].end(); it++){
+				output->push_back(*it);
+			}
+		}else if(curRank < irank.size() ) break;
+
 		curRank++;
 	}
 	
-	if(output->size() < maxSize && curRank < ranked.size() ){
-		vector<solution> nextRank(ranked[curRank].begin(), ranked[curRank].end() );
+	if(output->size() < maxSize && curRank < frank.size() ){
+		vector<solution> nextRank(frank[curRank].begin(), frank[curRank].end() );
+
+		while(output->size() < maxSize){
+			unsigned int select = rand() % nextRank.size();
+			output->push_back(nextRank[select]);
+			nextRank.erase(nextRank.begin() + select);
+		}
+	}
+	if(output->size() < maxSize && curRank < irank.size() ){
+		vector<solution> nextRank(irank[curRank].begin(), irank[curRank].end() );
 
 		while(output->size() < maxSize){
 			unsigned int select = rand() % nextRank.size();
