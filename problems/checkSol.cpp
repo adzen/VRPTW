@@ -103,7 +103,7 @@ void checkTimeWindow(vector< vector<int> > &sol, vector< vector<int> > &input){
          if(arrival > input[ sol[route][cus] ][DEADLINE]){
             printf("[X] route %d customer %d's arrival is late.\n", route, sol[route][cus]);
          }else if(arrival < input[ sol[route][cus] ][START]){
-            start = input[ sol[route][cus] ][4];
+            start = input[ sol[route][cus] ][START];
          }
          
          double end = start + input[ sol[route][cus] ][UNLOAD];
