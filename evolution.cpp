@@ -13,13 +13,15 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 
 	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
 	// find longest route
-	unsigned int maxR, max = 0;
+	unsigned int maxR = bRoutes.size(), max = 0;
 	for(unsigned int i = 0; i < bRoutes.size(); ++i){
-		if(bRoutes[i].visits.size() > max){
+		if(bRoutes[i].feasible && bRoutes[i].visits.size() > max){
 			max = bRoutes[i].visits.size();
 			maxR = i;
 		}
 	}
+	
+	if(maxR == bRoutes.size() ) maxR = rand() % bRoutes.size();
 	
 	// remove longest route's customer
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ++it){
