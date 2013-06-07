@@ -33,9 +33,14 @@ int main(int argc, char *argv[]){
 	// evolution
 	for(int run = 0; run < 100; run++){putchar('*');
 		list<solution> merged(population.begin(), population.end() );
-		for(int off = 0; off < 100; off++){
-			solution p = crossover( tournament(population, input), tournament(population, input), input);
-			merged.push_back(p);
+		for(int off = 0; off < 50; off++){
+			solution parent1 = tournament(population, input);
+			solution parent2 = tournament(population, input);
+
+			solution off1 = crossover(parent1, parent2, input);
+			merged.push_back(off1);
+			solution off2 = crossover(parent2, parent1, input);
+			merged.push_back(off2);
 		}
 
 		list<solution> feasible, infeasible;
