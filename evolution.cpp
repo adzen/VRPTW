@@ -5,7 +5,53 @@
 using namespace std;
 
 bool reduceRoute(solution &sol, const problem& input){
-	return false;
+	if(sol.routes.size() <= 1) return false;
+	unsigned int before = sol.routes.size();
+	
+	// find route with fewest # of customers.
+	unsigned int min = input.getNumCusto();
+	list<route>::iterator minR;
+	for(list<route>::iterator it = sol.routes.begin(); it != sol.routes.end(); it++){
+		if(it->visits.size() <= min){
+			minR = it;
+			min = it->visits.size();
+		}
+	}
+
+	// remove this shortest route
+	route shortest = (*minR);
+	sol.routes.erase(minR);
+
+	for(list<int>::iterator cus = shortest.visits.begin(); cus != shortest.visits.end();){
+		solution min = sol;
+
+		for(int tryCount = 0; tryCount < input.getNumCusto(); tryCount++){
+			solution temp = min;
+			list<route>::iterator r = temp.routes.begin();
+			advance(r, rand() % temp.routes.size() );
+			list<int>::iterator ins = r->visits.begin();
+			advance(ins, r->visits.size());
+			r->visits.insert(ins, *cus);
+			temp.fitness(input);
+			if(temp.totalDistance < min.totalDistance){
+				min = temp;
+			}
+		}
+
+		if(min.totalDistance < sol.totalDistance){
+			cus = shortest.visits.erase(cus);
+			sol = min;
+		}else{
+			cus++;
+		}
+	}
+
+	// append a new route with customers can't be inserted.
+	if( !shortest.visits.empty() ){
+		sol.routes.push_front(shortest);
+	}
+
+	return (sol.routes.size() < before);
 }
 
 solution crossover(const solution &pa, const solution &pb, const problem& input){
