@@ -174,8 +174,8 @@ bool solution::fdominate(const solution &solA, const solution &solB){
 }
 
 bool solution::idominate(const solution &solA, const solution &solB){
-	if( solA.exceededCapacity <= solB.exceededCapacity && solA.totalTimewarp <= solB.totalTimewarp ){
-		return ( solA.exceededCapacity < solB.exceededCapacity || solA.totalTimewarp < solB.totalTimewarp );
+	if( solA.exceededCapacity <= solB.exceededCapacity && solA.routes.size() <= solB.routes.size() && solA.totalTimewarp <= solB.totalTimewarp ){
+		return ( solA.exceededCapacity < solB.exceededCapacity || solA.routes.size() < solB.routes.size() || solA.totalTimewarp < solB.totalTimewarp );
 	}else return false;
 }
 
