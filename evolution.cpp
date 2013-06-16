@@ -156,6 +156,7 @@ const solution& tournament(const std::list<solution> &population, const problem 
 // Use Deb's "Fast Nondominated Sorting" (2002)
 // Ref.: "A fast and elitist multiobjective genetic algorithm: NSGA-II"
 void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output, bool feasible){
+	if( population.empty() ) return;
 	vector<solution> solutions(population.begin(), population.end() );
 
 	vector< list<int> > intOutput;
