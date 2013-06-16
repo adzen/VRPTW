@@ -250,7 +250,7 @@ void environmental(const vector< list<solution> > &frank, const vector< list<sol
 	if(output->size() < maxSize && curRank < frank.size() ){
 		vector<solution> nextRank(frank[curRank].begin(), frank[curRank].end() );
 
-		while(output->size() < maxSize){
+		while(output->size() < maxSize && !nextRank.empty()){
 			unsigned int select = rand() % nextRank.size();
 			output->push_back(nextRank[select]);
 			nextRank.erase(nextRank.begin() + select);
@@ -259,7 +259,7 @@ void environmental(const vector< list<solution> > &frank, const vector< list<sol
 	if(output->size() < maxSize && curRank < irank.size() ){
 		vector<solution> nextRank(irank[curRank].begin(), irank[curRank].end() );
 
-		while(output->size() < maxSize){
+		while(output->size() < maxSize && !nextRank.empty()){
 			unsigned int select = rand() % nextRank.size();
 			output->push_back(nextRank[select]);
 			nextRank.erase(nextRank.begin() + select);
