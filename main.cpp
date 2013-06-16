@@ -37,10 +37,10 @@ int main(int argc, char *argv[]){
 	
 	// initial population
 	list<solution> population(100);
-	int targetNum = (input.getNumCusto() + input.calMinRoute() ) / 2, initID = 0;
-	for(list<solution>::iterator it = population.begin(); it != population.end(); ++it, ++initID){
-		if(initID < 50) it->random(input);
-		else it->random(targetNum, input);
+	//int targetNum = (input.getNumCusto() + input.calMinRoute() ) / 2, initID = 0;
+	for(list<solution>::iterator it = population.begin(); it != population.end(); ++it){
+		it->random(input);
+		//else it->random(targetNum, input);
 	}
 	
 	// evolution
