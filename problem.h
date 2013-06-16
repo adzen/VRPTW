@@ -19,6 +19,7 @@ private:
 	std::vector<customer> allCustomer;
 	std::vector< std::vector<double> > distance;
 	int capacity;
+	bool shortHorizon;
 };
 
 #endif
