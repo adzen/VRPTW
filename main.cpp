@@ -12,12 +12,25 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
+	// commands: VRPTW.exe inputFileName randomSeed(optional)
+	if(argc < 2){
+		puts("Unknown commands.");
+		return 1;
+	}
+
 	clock_t start = clock();
-	srand( (unsigned int)time(NULL) );
+	unsigned int seed;
+	if(argc > 2){
+		seed = (unsigned int)atoi(argv[2]);
+	}else{
+		seed = (unsigned int)time(NULL);
+	}
+	printf("Seed = %d\n", seed);
+	srand(seed);
 
 	// load input data
 	problem input;
-	if( !input.load("C:\\Users\\adzen\\Documents\\GitHub\\VRPTW\\problems\\0025_RC208.txt") ){
+	if( !input.load(argv[1]) ){
 		puts("Unable to open input file!");
 		return 1;
 	}
@@ -31,7 +44,9 @@ int main(int argc, char *argv[]){
 	}
 	
 	// evolution
-	for(int run = 0; run < 100; run++){putchar('*');
+	for(int run = 0; run < 500; run++){
+		putchar('*');
+
 		list<solution> merged(population.begin(), population.end() );
 		for(int off = 0; off < 50; off++){
 			solution parent1 = tournament(population, input);
@@ -58,6 +73,7 @@ int main(int argc, char *argv[]){
 		population.clear();
 		environmental(frank, irank, &population, 100);
 	}
+	putchar('\n');
 
 	// finally...
 	vector< list<solution> > rank;
@@ -65,10 +81,10 @@ int main(int argc, char *argv[]){
 	rank[0].sort(solution::sort);
 	rank[0].unique(solution::isSame);
 
-	for(list<solution>::const_iterator it = rank[0].begin(); it != rank[0].end(); ++it) if(it->feasible) it->print(stdout);
+	for(list<solution>::const_iterator it = rank[0].begin(); it != rank[0].end(); ++it)
+		if(it->feasible) it->print(stdout);
 	clock_t end = clock();
 
-	printf("%f second\n", ((double)(end)-start) / CLOCKS_PER_SEC);
-	system("pause");
+	printf("%.3f second\n", ((double)(end)-start) / CLOCKS_PER_SEC);
 	return 0;
 }
