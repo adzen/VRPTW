@@ -160,7 +160,9 @@ int solution::cmp(const solution &solA, const solution &solB, const problem &inp
 		if(solA.feasible) return -1;
 		else return 1;
 	}else if(solA.feasible){
-		return (solA.unbalancedCapacity - solB.unbalancedCapacity);
+		if(solA.routes.size() != solB.routes.size() ) return (solA.routes.size() - solB.routes.size() );
+		else if(solA.totalDistance < solB.totalDistance) return -1;
+		else return 1;
 	}else{
 		if(solA.totalTimewarp < solB.totalTimewarp) return -1;
 		else return 1;
