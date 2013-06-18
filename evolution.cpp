@@ -11,10 +11,12 @@ bool reduceRoute(solution &sol, const problem& input){
 	// find route with fewest # of customers.
 	unsigned int min = input.getNumCusto();
 	list<route>::iterator minR;
+	double dis = 0;
 	for(list<route>::iterator it = sol.routes.begin(); it != sol.routes.end(); it++){
-		if(it->visits.size() <= min){
+		double p = it->distance / it->visits.size();
+		if(p > dis){
 			minR = it;
-			min = it->visits.size();
+			dis = p;
 		}
 	}
 
@@ -60,10 +62,14 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
 	// find longest route
 	unsigned int maxR = bRoutes.size(), max = 0;
+	double dis = 1e100;
 	for(unsigned int i = 0; i < bRoutes.size(); ++i){
-		if(bRoutes[i].feasible && bRoutes[i].visits.size() > max){
-			max = bRoutes[i].visits.size();
-			maxR = i;
+		if(bRoutes[i].feasible){
+			double p = bRoutes[i].distance / bRoutes[i].visits.size();
+			if(p < dis){
+				maxR = i;
+				dis = p;
+			}
 		}
 	}
 	
