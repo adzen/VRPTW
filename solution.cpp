@@ -139,6 +139,49 @@ void solution::random(const problem& input){
 	// if(totalDistance != dis || totalTimewarp > 0 || !feasible) puts("ERROR!");
 }
 
+// Solomon's I1 insertion heuristic (1987)
+// Ref.: "Algorithms for the Vehicle Routing and Scheduling Problems with Time Window Constraints"
+void solution::solomon(const problem& input, bool farthest, double mu, double lambda, double alpha1){
+	clear();
+
+	// initialize
+	vector<int> unrouted;
+	unrouted.resize(input.getNumCusto());
+	for(int id = 1; id <= input.getNumCusto(); id++) unrouted[id-1] = id;
+
+	while( !unrouted.empty() ){
+		route r;
+
+		// choose first customer
+		unsigned int index;
+		if(farthest){  // the farthest unrouted customer
+			double farthest = 0;
+			for(unsigned int c = 0; c < unrouted.size(); c++){
+				if(input.getDistance(0, unrouted[c]) > farthest){
+					index = c;
+					farthest = input.getDistance(0, unrouted[c]);
+				}
+			}
+		}else{  // the unrouted customer with the earliest deadline
+			int earliest = input[0].end;
+			for(unsigned int c = 0; c < unrouted.size(); c++){
+				if(input[ unrouted[c] ].end < earliest){
+					index = c;
+					earliest = input[ unrouted[c] ].end;
+				}
+			}
+		}
+		r.visits.push_front(unrouted[index]);
+		unrouted.erase(unrouted.begin() + index);
+
+
+	
+		routes.push_front(r);
+	}
+
+	fitness(input);
+}
+
 void solution::fitness(const problem& input){
 	totalDistance = totalTimewarp = totalWaiting = unbalancedCapacity = exceededCapacity = 0;
 	feasible = true;
