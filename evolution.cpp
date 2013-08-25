@@ -74,16 +74,15 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	
 	if(maxR == bRoutes.size() ) maxR = rand() % bRoutes.size();
 	
-	// remove longest route's customer
+	// remove best route's customer
+	for(list<int>::iterator cus = bRoutes[maxR].visits.begin(); cus != bRoutes[maxR].visits.end(); cus++){
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ++it){
-		for(list<int>::iterator cus = bRoutes[maxR].visits.begin(); cus != bRoutes[maxR].visits.end(); cus++){
-			list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
-			if( todel != it->visits.end() ){
-				it->visits.erase(todel);
-				if(it->visits.size() == 0) break;
-			}
+		list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
+		if( todel != it->visits.end() ){
+			it->visits.erase(todel);
+			break;
 		}
-	}
+	}}
 
 	// remove empty route
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ){
