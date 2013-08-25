@@ -20,3 +20,4 @@
 *.opensdf
 [Dd]ebug/
 [Rr]elease/
+*.exe
