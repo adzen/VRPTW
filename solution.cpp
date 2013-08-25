@@ -57,6 +57,7 @@ void solution::random(int maxRoutes, const problem& input){
 			
 			route newRoute;
 			newRoute.visits = list<int>(sorted.begin(), sorted.end());
+			newRoute.modified = true;
 			routes.push_back(newRoute);
 		}
 	}
@@ -112,6 +113,7 @@ void solution::random(const problem& input){
 		if(newRoute.visits.back() != ids[i]){
 			newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
 			newRoute.feasible = true;
+			newRoute.modified = false;
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
 			totalWaiting += newRoute.waiting;
@@ -127,6 +129,7 @@ void solution::random(const problem& input){
 	if(newRoute.load != 0){
 		newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
 		newRoute.feasible = true;
+		newRoute.modified = false;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
 		totalWaiting += newRoute.waiting;

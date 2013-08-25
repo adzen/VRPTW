@@ -33,6 +33,7 @@ bool reduceRoute(solution &sol, const problem& input){
 			list<int>::iterator ins = r->visits.begin();
 			advance(ins, r->visits.size());
 			r->visits.insert(ins, *cus);
+			r->modified = true;
 			temp.fitness(input);
 			if(temp.totalDistance < min.totalDistance){
 				min = temp;
@@ -41,6 +42,7 @@ bool reduceRoute(solution &sol, const problem& input){
 
 		if(min.totalDistance < sol.totalDistance){
 			cus = shortest.visits.erase(cus);
+			shortest.modified = true;
 			sol = min;
 		}else{
 			cus++;
@@ -80,6 +82,7 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 		list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
 		if( todel != it->visits.end() ){
 			it->visits.erase(todel);
+			it->modified = true;
 			break;
 		}
 	}}
@@ -124,7 +127,9 @@ void mutation(solution &sol, const problem& input){
 		advance(cusB, rand() % routeB->visits.size() );
 
 		routeB->visits.insert(cusB, *cusA);
+		routeB->modified = true;
 		routeA->visits.erase(cusA);
+		routeA->modified = true;
 		bool reduce = false;
 		if( routeA->visits.empty() ){
 			test.routes.erase(routeA);

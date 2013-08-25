@@ -17,9 +17,12 @@ void route::print(FILE *fp) const {
 void route::clear(){
 	visits.clear();
 	distance = timewarp = waiting = load = 0;
+	modified = true;
 }
 
 void route::fitness(const problem& input){
+	if(!modified) return;
+
 	vector<int> ids(visits.begin(), visits.end() );
 	
 	// reset all attributes
@@ -58,6 +61,8 @@ void route::fitness(const problem& input){
 		feasible = false;
 		timewarp += arrival - input[0].end;
 	}
+
+	modified = false;
 }
 
 int route::cmp(const route& routeA, const route& routeB, const problem& input){
