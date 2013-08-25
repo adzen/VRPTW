@@ -106,15 +106,18 @@ void mutation(solution &sol, const problem& input){
 	while(tryCount < input.getNumCusto() ){
 		solution test = sol;
 
+		// randomly select two routes
 		list<route>::iterator routeA = test.routes.begin();
 		advance(routeA, rand() % test.routes.size() );
 		list<route>::iterator routeB = test.routes.begin();
 		advance(routeB, rand() % test.routes.size() );
 
+		// # of feasible route BEFORE the reinsertion
 		int beforeFeasibleCount = 0;
 		if(routeA->feasible) beforeFeasibleCount++;
 		if(routeB->feasible) beforeFeasibleCount++;
 
+		// randomly select two positions
 		list<int>::iterator cusA = routeA->visits.begin();
 		advance(cusA, rand() % routeA->visits.size() );
 		list<int>::iterator cusB = routeB->visits.begin();
@@ -130,6 +133,7 @@ void mutation(solution &sol, const problem& input){
 
 		test.fitness(input);
 		
+		// # of feasible route AFTER the reinsertion
 		int afterFeasibleCount = 0;
 		if(reduce || routeA->feasible) afterFeasibleCount++;
 		if(routeB->feasible) afterFeasibleCount++;
