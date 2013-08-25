@@ -59,8 +59,8 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	solution offspring = pa;
 
 	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
-	// find longest route
-	unsigned int maxR = bRoutes.size(), max = 0;
+	// find best route with smallest ratio (distance / # of customers).
+	unsigned int maxR = bRoutes.size();
 	double dis = 1e100;
 	for(unsigned int i = 0; i < bRoutes.size(); ++i){
 		if(bRoutes[i].feasible){
