@@ -8,8 +8,7 @@ bool reduceRoute(solution &sol, const problem& input){
 	if(sol.routes.size() <= 1) return false;
 	unsigned int before = sol.routes.size();
 	
-	// find route with fewest # of customers.
-	unsigned int min = input.getNumCusto();
+	// find route with highest (distance / # of customers).
 	list<route>::iterator minR;
 	double dis = 0;
 	for(list<route>::iterator it = sol.routes.begin(); it != sol.routes.end(); it++){
