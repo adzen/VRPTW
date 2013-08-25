@@ -231,8 +231,8 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 
 	// remove duplicate solution in same rank
 	for(unsigned int rank = 0; rank < output->size(); ++rank){
-		(*output)[rank].sort(solution::sort);
-		(*output)[rank].unique(solution::isSame);
+		(*output)[rank].sort();
+		(*output)[rank].unique();
 	}
 }
 

@@ -224,13 +224,13 @@ bool solution::idominate(const solution &solA, const solution &solB){
 	}else return false;
 }
 
-bool solution::isSame(const solution &solA, const solution &solB){
-	return (solA.routes.size() == solB.routes.size() && 
-			solA.unbalancedCapacity == solB.unbalancedCapacity &&
-            fabs(solA.totalDistance - solB.totalDistance) < 0.01);
+bool solution::operator == (const solution &another) const {
+	return (routes.size() == another.routes.size() && 
+			unbalancedCapacity == another.unbalancedCapacity &&
+            fabs(totalDistance - another.totalDistance) < 0.01);
 }
 
-bool solution::sort(const solution &solA, const solution &solB){
-	if(solA.routes.size() != solB.routes.size() ) return (solA.routes.size() < solB.routes.size());
-	else return (solA.totalDistance < solB.totalDistance);
+bool solution::operator < (const solution &another) const {
+	if(routes.size() != another.routes.size() ) return (routes.size() < another.routes.size());
+	else return (totalDistance < another.totalDistance);
 }

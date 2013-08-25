@@ -19,8 +19,8 @@ public:
 	static int cmp(const solution &solA, const solution &solB, const problem &input);
 	static bool fdominate(const solution &solA, const solution &solB);
 	static bool idominate(const solution &solA, const solution &solB);
-	static bool isSame(const solution &solA, const solution &solB);
-	static bool sort(const solution &solA, const solution &solB);
+	bool operator == (const solution &another) const;
+	bool operator < (const solution &another) const;
 
 	std::list<route> routes;
 	double totalDistance, totalTimewarp, totalWaiting;
