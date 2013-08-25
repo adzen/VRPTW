@@ -17,6 +17,7 @@ bool problem::load(const char* filename){
 	}
 	allCustomer.reserve(inputNum + 1);    // with depot
 
+	int totalDemand = 0;
 	for(int i = 0; i <= inputNum; ++i){
 		double x, y;
 		int d, s, e, u;
@@ -26,12 +27,17 @@ bool problem::load(const char* filename){
 			return false;
 		}
 
+		totalDemand += d;
 		customer newCustomer(i, x, y, d, s, e, u);
 		allCustomer.push_back(newCustomer);
 	}
 	fclose(fp);
 	
 	calDistances();
+
+	double avgCusPerVehicle = capacity / (totalDemand / inputNum);
+	shortHorizon = (calMinRoute() > avgCusPerVehicle);
+
 	return true;
 }
 

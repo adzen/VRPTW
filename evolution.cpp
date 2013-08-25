@@ -5,7 +5,55 @@
 using namespace std;
 
 bool reduceRoute(solution &sol, const problem& input){
-	return false;
+	if(sol.routes.size() <= 1) return false;
+	unsigned int before = sol.routes.size();
+	
+	// find route with fewest # of customers.
+	unsigned int min = input.getNumCusto();
+	list<route>::iterator minR;
+	double dis = 0;
+	for(list<route>::iterator it = sol.routes.begin(); it != sol.routes.end(); it++){
+		double p = it->distance / it->visits.size();
+		if(p > dis){
+			minR = it;
+			dis = p;
+		}
+	}
+
+	// remove this shortest route
+	route shortest = (*minR);
+	sol.routes.erase(minR);
+
+	for(list<int>::iterator cus = shortest.visits.begin(); cus != shortest.visits.end();){
+		solution min = sol;
+
+		for(int tryCount = 0; tryCount < input.getNumCusto(); tryCount++){
+			solution temp = min;
+			list<route>::iterator r = temp.routes.begin();
+			advance(r, rand() % temp.routes.size() );
+			list<int>::iterator ins = r->visits.begin();
+			advance(ins, r->visits.size());
+			r->visits.insert(ins, *cus);
+			temp.fitness(input);
+			if(temp.totalDistance < min.totalDistance){
+				min = temp;
+			}
+		}
+
+		if(min.totalDistance < sol.totalDistance){
+			cus = shortest.visits.erase(cus);
+			sol = min;
+		}else{
+			cus++;
+		}
+	}
+
+	// append a new route with customers can't be inserted.
+	if( !shortest.visits.empty() ){
+		sol.routes.push_front(shortest);
+	}
+
+	return (sol.routes.size() < before);
 }
 
 solution crossover(const solution &pa, const solution &pb, const problem& input){
@@ -13,13 +61,19 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 
 	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
 	// find longest route
-	unsigned int maxR, max = 0;
+	unsigned int maxR = bRoutes.size(), max = 0;
+	double dis = 1e100;
 	for(unsigned int i = 0; i < bRoutes.size(); ++i){
-		if(bRoutes[i].visits.size() > max){
-			max = bRoutes[i].visits.size();
-			maxR = i;
+		if(bRoutes[i].feasible){
+			double p = bRoutes[i].distance / bRoutes[i].visits.size();
+			if(p < dis){
+				maxR = i;
+				dis = p;
+			}
 		}
 	}
+	
+	if(maxR == bRoutes.size() ) maxR = rand() % bRoutes.size();
 	
 	// remove longest route's customer
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ++it){
@@ -107,7 +161,8 @@ const solution& tournament(const std::list<solution> &population, const problem 
 
 // Use Deb's "Fast Nondominated Sorting" (2002)
 // Ref.: "A fast and elitist multiobjective genetic algorithm: NSGA-II"
-void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output){
+void ranking(const std::list<solution> &population, std::vector< std::list<solution> > *output, bool feasible){
+	if( population.empty() ) return;
 	vector<solution> solutions(population.begin(), population.end() );
 
 	vector< list<int> > intOutput;
@@ -130,10 +185,18 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 	// for each solution
 	for(unsigned int p = 0; p < solutions.size(); p++){
 		for(unsigned int q = 0; q < solutions.size(); q++){
-			if( solution::dominate(solutions[p], solutions[q]) ){
-				dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
-			}else if( solution::dominate(solutions[q], solutions[p]) ){
-				counter[p]++;
+			if( feasible ){
+				if( solution::fdominate(solutions[p], solutions[q]) ){
+					dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
+				}else if( solution::fdominate(solutions[q], solutions[p]) ){
+					counter[p]++;
+				}
+			}else{
+				if( solution::idominate(solutions[p], solutions[q]) ){
+					dominated[p].push_back(q);  // Add q to the set of solutions dominated by p
+				}else if( solution::idominate(solutions[q], solutions[p]) ){
+					counter[p]++;
+				}
 			}
 		}
 		
@@ -171,19 +234,38 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 	}
 }
 
-void environmental(const std::vector< std::list<solution> > &ranked, std::list<solution> *output, unsigned int maxSize){
+void environmental(const vector< list<solution> > &frank, const vector< list<solution> > &irank, list<solution> *output, unsigned int maxSize){
 	unsigned int curRank = 0;
-	while(output->size() + ranked[curRank].size() <= maxSize){
-		for(list<solution>::const_iterator it = ranked[curRank].begin(); it != ranked[curRank].end(); it++){
-			output->push_back(*it);
-		}
+
+	while(true){
+		if(curRank < frank.size() && output->size() + frank[curRank].size() <= maxSize){
+			for(list<solution>::const_iterator it = frank[curRank].begin(); it != frank[curRank].end(); it++){
+				output->push_back(*it);
+			}
+		}else if(curRank < frank.size() ) break;
+
+		if(curRank < irank.size() && output->size() + irank[curRank].size() <= maxSize){
+			for(list<solution>::const_iterator it = irank[curRank].begin(); it != irank[curRank].end(); it++){
+				output->push_back(*it);
+			}
+		}else if(curRank < irank.size() ) break;
+
 		curRank++;
 	}
 	
-	if(output->size() < maxSize && curRank < ranked.size() ){
-		vector<solution> nextRank(ranked[curRank].begin(), ranked[curRank].end() );
+	if(output->size() < maxSize && curRank < frank.size() ){
+		vector<solution> nextRank(frank[curRank].begin(), frank[curRank].end() );
 
-		while(output->size() < maxSize){
+		while(output->size() < maxSize && !nextRank.empty()){
+			unsigned int select = rand() % nextRank.size();
+			output->push_back(nextRank[select]);
+			nextRank.erase(nextRank.begin() + select);
+		}
+	}
+	if(output->size() < maxSize && curRank < irank.size() ){
+		vector<solution> nextRank(irank[curRank].begin(), irank[curRank].end() );
+
+		while(output->size() < maxSize && !nextRank.empty()){
 			unsigned int select = rand() % nextRank.size();
 			output->push_back(nextRank[select]);
 			nextRank.erase(nextRank.begin() + select);
