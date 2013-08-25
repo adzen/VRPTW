@@ -241,15 +241,11 @@ void environmental(const vector< list<solution> > &frank, const vector< list<sol
 
 	while(true){
 		if(curRank < frank.size() && output->size() + frank[curRank].size() <= maxSize){
-			for(list<solution>::const_iterator it = frank[curRank].begin(); it != frank[curRank].end(); it++){
-				output->push_back(*it);
-			}
+			output->insert(output->end(), frank[curRank].begin(), frank[curRank].end() );
 		}else if(curRank < frank.size() ) break;
 
 		if(curRank < irank.size() && output->size() + irank[curRank].size() <= maxSize){
-			for(list<solution>::const_iterator it = irank[curRank].begin(); it != irank[curRank].end(); it++){
-				output->push_back(*it);
-			}
+			output->insert(output->end(), irank[curRank].begin(), irank[curRank].end() );
 		}else if(curRank < irank.size() ) break;
 
 		curRank++;
