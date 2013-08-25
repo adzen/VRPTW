@@ -37,10 +37,8 @@ int main(int argc, char *argv[]){
 	
 	// initial population
 	list<solution> population(100);
-	//int targetNum = (input.getNumCusto() + input.calMinRoute() ) / 2, initID = 0;
 	for(list<solution>::iterator it = population.begin(); it != population.end(); ++it){
 		it->random(input);
-		//else it->random(targetNum, input);
 	}
 	
 	// evolution
@@ -78,8 +76,8 @@ int main(int argc, char *argv[]){
 	// finally...
 	vector< list<solution> > rank;
 	ranking(population, &rank, true);
-	rank[0].sort(solution::sort);
-	rank[0].unique(solution::isSame);
+	rank[0].sort();
+	rank[0].unique();
 
 	for(list<solution>::const_iterator it = rank[0].begin(); it != rank[0].end(); ++it)
 		if(it->feasible) it->print(stdout);

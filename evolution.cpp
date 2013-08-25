@@ -8,8 +8,7 @@ bool reduceRoute(solution &sol, const problem& input){
 	if(sol.routes.size() <= 1) return false;
 	unsigned int before = sol.routes.size();
 	
-	// find route with fewest # of customers.
-	unsigned int min = input.getNumCusto();
+	// find route with highest (distance / # of customers).
 	list<route>::iterator minR;
 	double dis = 0;
 	for(list<route>::iterator it = sol.routes.begin(); it != sol.routes.end(); it++){
@@ -34,6 +33,7 @@ bool reduceRoute(solution &sol, const problem& input){
 			list<int>::iterator ins = r->visits.begin();
 			advance(ins, r->visits.size());
 			r->visits.insert(ins, *cus);
+			r->modified = true;
 			temp.fitness(input);
 			if(temp.totalDistance < min.totalDistance){
 				min = temp;
@@ -42,6 +42,7 @@ bool reduceRoute(solution &sol, const problem& input){
 
 		if(min.totalDistance < sol.totalDistance){
 			cus = shortest.visits.erase(cus);
+			shortest.modified = true;
 			sol = min;
 		}else{
 			cus++;
@@ -60,8 +61,8 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	solution offspring = pa;
 
 	vector<route> bRoutes(pb.routes.begin(), pb.routes.end());
-	// find longest route
-	unsigned int maxR = bRoutes.size(), max = 0;
+	// find best route with smallest ratio (distance / # of customers).
+	unsigned int maxR = bRoutes.size();
 	double dis = 1e100;
 	for(unsigned int i = 0; i < bRoutes.size(); ++i){
 		if(bRoutes[i].feasible){
@@ -75,16 +76,16 @@ solution crossover(const solution &pa, const solution &pb, const problem& input)
 	
 	if(maxR == bRoutes.size() ) maxR = rand() % bRoutes.size();
 	
-	// remove longest route's customer
+	// remove best route's customer
+	for(list<int>::iterator cus = bRoutes[maxR].visits.begin(); cus != bRoutes[maxR].visits.end(); cus++){
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ++it){
-		for(list<int>::iterator cus = bRoutes[maxR].visits.begin(); cus != bRoutes[maxR].visits.end(); cus++){
-			list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
-			if( todel != it->visits.end() ){
-				it->visits.erase(todel);
-				if(it->visits.size() == 0) break;
-			}
+		list<int>::iterator todel = find(it->visits.begin(), it->visits.end(), *cus);
+		if( todel != it->visits.end() ){
+			it->visits.erase(todel);
+			it->modified = true;
+			break;
 		}
-	}
+	}}
 
 	// remove empty route
 	for(list<route>::iterator it = offspring.routes.begin(); it != offspring.routes.end(); ){
@@ -108,22 +109,27 @@ void mutation(solution &sol, const problem& input){
 	while(tryCount < input.getNumCusto() ){
 		solution test = sol;
 
+		// randomly select two routes
 		list<route>::iterator routeA = test.routes.begin();
 		advance(routeA, rand() % test.routes.size() );
 		list<route>::iterator routeB = test.routes.begin();
 		advance(routeB, rand() % test.routes.size() );
 
+		// # of feasible route BEFORE the reinsertion
 		int beforeFeasibleCount = 0;
 		if(routeA->feasible) beforeFeasibleCount++;
 		if(routeB->feasible) beforeFeasibleCount++;
 
+		// randomly select two positions
 		list<int>::iterator cusA = routeA->visits.begin();
 		advance(cusA, rand() % routeA->visits.size() );
 		list<int>::iterator cusB = routeB->visits.begin();
 		advance(cusB, rand() % routeB->visits.size() );
 
 		routeB->visits.insert(cusB, *cusA);
+		routeB->modified = true;
 		routeA->visits.erase(cusA);
+		routeA->modified = true;
 		bool reduce = false;
 		if( routeA->visits.empty() ){
 			test.routes.erase(routeA);
@@ -132,6 +138,7 @@ void mutation(solution &sol, const problem& input){
 
 		test.fitness(input);
 		
+		// # of feasible route AFTER the reinsertion
 		int afterFeasibleCount = 0;
 		if(reduce || routeA->feasible) afterFeasibleCount++;
 		if(routeB->feasible) afterFeasibleCount++;
@@ -229,8 +236,8 @@ void ranking(const std::list<solution> &population, std::vector< std::list<solut
 
 	// remove duplicate solution in same rank
 	for(unsigned int rank = 0; rank < output->size(); ++rank){
-		(*output)[rank].sort(solution::sort);
-		(*output)[rank].unique(solution::isSame);
+		(*output)[rank].sort();
+		(*output)[rank].unique();
 	}
 }
 
@@ -239,15 +246,11 @@ void environmental(const vector< list<solution> > &frank, const vector< list<sol
 
 	while(true){
 		if(curRank < frank.size() && output->size() + frank[curRank].size() <= maxSize){
-			for(list<solution>::const_iterator it = frank[curRank].begin(); it != frank[curRank].end(); it++){
-				output->push_back(*it);
-			}
+			output->insert(output->end(), frank[curRank].begin(), frank[curRank].end() );
 		}else if(curRank < frank.size() ) break;
 
 		if(curRank < irank.size() && output->size() + irank[curRank].size() <= maxSize){
-			for(list<solution>::const_iterator it = irank[curRank].begin(); it != irank[curRank].end(); it++){
-				output->push_back(*it);
-			}
+			output->insert(output->end(), irank[curRank].begin(), irank[curRank].end() );
 		}else if(curRank < irank.size() ) break;
 
 		curRank++;

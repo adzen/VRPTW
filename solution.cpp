@@ -57,6 +57,7 @@ void solution::random(int maxRoutes, const problem& input){
 			
 			route newRoute;
 			newRoute.visits = list<int>(sorted.begin(), sorted.end());
+			newRoute.modified = true;
 			routes.push_back(newRoute);
 		}
 	}
@@ -112,6 +113,7 @@ void solution::random(const problem& input){
 		if(newRoute.visits.back() != ids[i]){
 			newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
 			newRoute.feasible = true;
+			newRoute.modified = false;
 			routes.push_back(newRoute);
 			totalDistance += newRoute.distance;
 			totalWaiting += newRoute.waiting;
@@ -127,6 +129,7 @@ void solution::random(const problem& input){
 	if(newRoute.load != 0){
 		newRoute.distance += input.getDistance(newRoute.visits.back(), 0);
 		newRoute.feasible = true;
+		newRoute.modified = false;
 		routes.push_back(newRoute);
 		totalDistance += newRoute.distance;
 		totalWaiting += newRoute.waiting;
@@ -137,6 +140,49 @@ void solution::random(const problem& input){
 	// double dis = totalDistance;
 	// fitness(input);
 	// if(totalDistance != dis || totalTimewarp > 0 || !feasible) puts("ERROR!");
+}
+
+// Solomon's I1 insertion heuristic (1987)
+// Ref.: "Algorithms for the Vehicle Routing and Scheduling Problems with Time Window Constraints"
+void solution::solomon(const problem& input, bool farthest, double mu, double lambda, double alpha1){
+	clear();
+
+	// initialize
+	vector<int> unrouted;
+	unrouted.resize(input.getNumCusto());
+	for(int id = 1; id <= input.getNumCusto(); id++) unrouted[id-1] = id;
+
+	while( !unrouted.empty() ){
+		route r;
+
+		// choose first customer
+		unsigned int index;
+		if(farthest){  // the farthest unrouted customer
+			double farthest = 0;
+			for(unsigned int c = 0; c < unrouted.size(); c++){
+				if(input.getDistance(0, unrouted[c]) > farthest){
+					index = c;
+					farthest = input.getDistance(0, unrouted[c]);
+				}
+			}
+		}else{  // the unrouted customer with the earliest deadline
+			int earliest = input[0].end;
+			for(unsigned int c = 0; c < unrouted.size(); c++){
+				if(input[ unrouted[c] ].end < earliest){
+					index = c;
+					earliest = input[ unrouted[c] ].end;
+				}
+			}
+		}
+		r.visits.push_front(unrouted[index]);
+		unrouted.erase(unrouted.begin() + index);
+
+
+	
+		routes.push_front(r);
+	}
+
+	fitness(input);
 }
 
 void solution::fitness(const problem& input){
@@ -181,13 +227,13 @@ bool solution::idominate(const solution &solA, const solution &solB){
 	}else return false;
 }
 
-bool solution::isSame(const solution &solA, const solution &solB){
-	return (solA.routes.size() == solB.routes.size() && 
-			solA.unbalancedCapacity == solB.unbalancedCapacity &&
-            solA.totalDistance - solB.totalDistance < 0.01 && solA.totalDistance - solB.totalDistance > -0.01 );
+bool solution::operator == (const solution &another) const {
+	return (routes.size() == another.routes.size() && 
+			unbalancedCapacity == another.unbalancedCapacity &&
+            fabs(totalDistance - another.totalDistance) < 0.01);
 }
 
-bool solution::sort(const solution &solA, const solution &solB){
-	if(solA.routes.size() != solB.routes.size() ) return (solA.routes.size() < solB.routes.size());
-	else return (solA.totalDistance < solB.totalDistance);
+bool solution::operator < (const solution &another) const {
+	if(routes.size() != another.routes.size() ) return (routes.size() < another.routes.size());
+	else return (totalDistance < another.totalDistance);
 }

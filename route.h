@@ -18,7 +18,7 @@ public:
 	std::list<int> visits;
 	double distance, timewarp, waiting;
 	int load;
-	bool feasible;
+	bool feasible, modified;
 };
 
 #endif
